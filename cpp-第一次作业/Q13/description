@@ -1,0 +1,97 @@
+把分数按下面的办法排成一个数表。
+1/1 1/2 1/3 1/4.....
+2/1 2/2 2/3....
+3/1 3/2 ....
+4/1.....
+.........
+我们以z字型方法给上表的每项编号。特定方法：第一项是1/1，然后是1/2、2/1、3/1、2/2、1/3、1/4、2/3……。编程输入项号N（1<=N<=100000），输出表中第N项。
+输入：
+3
+输出：
+2/1(无换行符)
+
+#include<iostream>
+#include<string>
+#include<cmath>
+#include<sstream>
+using namespace std;
+
+string TenToThirteen(int num)
+{
+	string result = "";
+	bool isNegative = false;
+	int temp = num;
+	if (num == 0) return "0";
+	else if (temp < 0)
+	{
+		isNegative = true;
+		temp = -temp;
+	}
+
+	while (temp>0)
+	{
+		int remainder = temp % 13;
+		string current = "";
+		switch (remainder)
+		{
+		case 10: current = "A"; break;
+		case 11: current = "B"; break;
+		case 12: current = "C"; break;
+		default:
+			stringstream ss;
+			ss << remainder;
+			current = ss.str();
+			break;
+		}
+		result = current + result;
+		temp /= 13;
+	}
+
+	if (isNegative) result = "-" + result;
+	return result;
+}
+
+int ThirteenToTen(string str)
+{
+	int num = 0; 
+	int index = 0;
+	if (str[0] == '-')
+	{
+		for (int i = str.size()-1; i > 0; i--)
+		{
+			if (str[i] < 58)
+				num += (str[i] - 48) * pow(13, index);  //×Ö·ûÎªÊý×ÖÊ±
+			else num += (str[i] - 55) * pow(13, index);  //×Ö·ûÎª'A'¡¢'B'¡¢'C'Ê±
+			index++;
+		}
+		num = -num;
+	}
+	else 
+	{
+		for (int i = str.size()-1; i >= 0; i--)
+		{
+			if (str[i] < 58)
+				num += (str[i] - 48)*pow(13, index);
+			else num += (str[i] - 55) * pow(13, index);
+			index++;
+		}
+	}
+	return num;
+}
+
+int main()
+{
+	string cmd, num1, num2;
+	cin >> cmd >> num1 >> num2;
+	if (cmd == "add")
+		cout << TenToThirteen(ThirteenToTen(num1) + ThirteenToTen(num2)) << endl;
+
+	if (cmd == "sub")
+		cout << TenToThirteen(ThirteenToTen(num1) - ThirteenToTen(num2)) << endl;
+
+	if (cmd == "mul")
+		cout << TenToThirteen(ThirteenToTen(num1) * ThirteenToTen(num2)) << endl;
+	
+	cin.get();
+	cin.get();
+}
